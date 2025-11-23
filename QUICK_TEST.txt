@@ -1,0 +1,79 @@
+═══════════════════════════════════════════════════════════════
+  QUICK POSTMAN TEST - COPY & PASTE
+═══════════════════════════════════════════════════════════════
+
+BASE URL: http://localhost:8080
+
+───────────────────────────────────────────────────────────────
+1. HEALTH CHECK
+───────────────────────────────────────────────────────────────
+GET http://localhost:8080/actuator/health
+
+───────────────────────────────────────────────────────────────
+2. CREATE INVOICE
+───────────────────────────────────────────────────────────────
+POST http://localhost:8080/invoices
+Headers: Content-Type = application/json
+
+Body:
+{
+  "customerId": 1,
+  "subscriptionId": 1,
+  "amount": 100.50,
+  "currency": "USD",
+  "dueDate": "2024-12-31"
+}
+
+───────────────────────────────────────────────────────────────
+3. GET INVOICE (use ID from step 2)
+───────────────────────────────────────────────────────────────
+GET http://localhost:8080/invoices/1
+
+───────────────────────────────────────────────────────────────
+4. REGISTER PAYMENT (use invoice ID from step 2)
+───────────────────────────────────────────────────────────────
+POST http://localhost:8080/payments
+Headers: Content-Type = application/json
+
+Body:
+{
+  "invoiceId": 1,
+  "amount": 100.50,
+  "method": "CREDIT_CARD",
+  "gatewayReference": "pay_001"
+}
+
+───────────────────────────────────────────────────────────────
+5. MARK INVOICE AS PAID (use invoice ID from step 2)
+───────────────────────────────────────────────────────────────
+POST http://localhost:8080/invoices/1/pay
+
+───────────────────────────────────────────────────────────────
+6. ISSUE CREDIT
+───────────────────────────────────────────────────────────────
+POST http://localhost:8080/credits
+Headers: Content-Type = application/json
+
+Body:
+{
+  "customerId": 1,
+  "amount": 25.00,
+  "reason": "Test credit"
+}
+
+───────────────────────────────────────────────────────────────
+7. SCHEDULE RENEWAL
+───────────────────────────────────────────────────────────────
+POST http://localhost:8080/renewals/schedule
+Headers: Content-Type = application/json
+
+Body:
+{
+  "subscriptionId": 1,
+  "renewalDate": "2024-12-31"
+}
+
+═══════════════════════════════════════════════════════════════
+NOTE: Replace "1" in URLs with actual IDs from responses
+═══════════════════════════════════════════════════════════════
+

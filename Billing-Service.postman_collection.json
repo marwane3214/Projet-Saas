@@ -1,0 +1,318 @@
+{
+	"info": {
+		"name": "Billing Service API",
+		"description": "Complete API collection for Billing Microservice",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/actuator/health",
+					"protocol": "http",
+					"host": ["localhost"],
+					"port": "8080",
+					"path": ["actuator", "health"]
+				}
+			}
+		},
+		{
+			"name": "Invoices",
+			"item": [
+				{
+					"name": "Create Invoice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": 1,\n  \"subscriptionId\": 1,\n  \"amount\": 100.50,\n  \"currency\": \"USD\",\n  \"dueDate\": \"2024-12-31\",\n  \"notes\": \"Monthly subscription invoice\",\n  \"idempotencyKey\": \"inv-001-unique-key\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/invoices",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["invoices"]
+						}
+					}
+				},
+				{
+					"name": "Get Invoice by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["invoices", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Invoices by Customer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices/customer/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["invoices", "customer", "1"]
+						}
+					}
+				},
+				{
+					"name": "Mark Invoice as Paid",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices/1/pay",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["invoices", "1", "pay"]
+						}
+					}
+				},
+				{
+					"name": "Trigger Reconciliation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices/1/reconcile",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["invoices", "1", "reconcile"]
+						}
+					}
+				},
+				{
+					"name": "Get All Invoices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/invoices",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["invoices"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "Register Payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"invoiceId\": 1,\n  \"amount\": 100.50,\n  \"method\": \"CREDIT_CARD\",\n  \"gatewayReference\": \"pay_1234567890\",\n  \"idempotencyKey\": \"pay-001-unique-key\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/payments",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["payments"]
+						}
+					}
+				},
+				{
+					"name": "Get Payment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/payments/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["payments", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Payments by Invoice",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/payments/invoice/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["payments", "invoice", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Renewals",
+			"item": [
+				{
+					"name": "Schedule Renewal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subscriptionId\": 1,\n  \"renewalDate\": \"2024-12-31\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/renewals/schedule",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["renewals", "schedule"]
+						}
+					}
+				},
+				{
+					"name": "Process Renewal",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/renewals/process/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["renewals", "process", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Renewal by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/renewals/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["renewals", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Renewals by Subscription",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/renewals/subscription/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["renewals", "subscription", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Credits",
+			"item": [
+				{
+					"name": "Issue Credit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": 1,\n  \"invoiceId\": 1,\n  \"amount\": 25.00,\n  \"reason\": \"Customer refund for service issue\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/credits",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["credits"]
+						}
+					}
+				},
+				{
+					"name": "Apply Credit to Invoice",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/credits/1/apply/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["credits", "1", "apply", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Credit by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/credits/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["credits", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Credits by Customer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/credits/customer/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8080",
+							"path": ["credits", "customer", "1"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
+
