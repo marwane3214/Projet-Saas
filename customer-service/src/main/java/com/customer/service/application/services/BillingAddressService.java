@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class BillingAddressService extends ContactService {
+public class BillingAddressService {
     
     private final BillingAddressRepository billingAddressRepository;
     private final CustomerRepository customerRepository;

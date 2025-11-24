@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class CompanyService extends CustomerService {
+public class CompanyService {
     
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;

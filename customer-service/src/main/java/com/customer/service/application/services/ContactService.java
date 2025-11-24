@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ContactService extends CompanyService {
+public class ContactService {
     
     private final ContactRepository contactRepository;
     private final CustomerRepository customerRepository;
