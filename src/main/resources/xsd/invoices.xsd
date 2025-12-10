@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://example.com/billing/soap"
+           xmlns:tns="http://example.com/billing/soap"
+           elementFormDefault="qualified">
+
+    <!-- Invoice Type -->
+    <xs:complexType name="invoice">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long" minOccurs="0"/>
+            <xs:element name="number" type="xs:string"/>
+            <xs:element name="customerId" type="xs:long"/>
+            <xs:element name="subscriptionId" type="xs:long"/>
+            <xs:element name="amount" type="xs:decimal"/>
+            <xs:element name="currency" type="xs:string"/>
+            <xs:element name="status" type="xs:string"/>
+            <xs:element name="dueDate" type="xs:date"/>
+            <xs:element name="issuedAt" type="xs:dateTime" minOccurs="0"/>
+            <xs:element name="notes" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Create Invoice Request -->
+    <xs:element name="createInvoiceRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="customerId" type="xs:long"/>
+                <xs:element name="subscriptionId" type="xs:long"/>
+                <xs:element name="amount" type="xs:decimal"/>
+                <xs:element name="currency" type="xs:string" minOccurs="0"/>
+                <xs:element name="dueDate" type="xs:date"/>
+                <xs:element name="notes" type="xs:string" minOccurs="0"/>
+                <xs:element name="idempotencyKey" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Create Invoice Response -->
+    <xs:element name="createInvoiceResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoice" type="tns:invoice"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Get Invoice Request -->
+    <xs:element name="getInvoiceRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Get Invoice Response -->
+    <xs:element name="getInvoiceResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoice" type="tns:invoice"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Get Invoices By Customer Request -->
+    <xs:element name="getInvoicesByCustomerRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="customerId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Get Invoices By Customer Response -->
+    <xs:element name="getInvoicesByCustomerResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoices" type="tns:invoice" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Mark Invoice As Paid Request -->
+    <xs:element name="markInvoiceAsPaidRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Mark Invoice As Paid Response -->
+    <xs:element name="markInvoiceAsPaidResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoice" type="tns:invoice"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>
+

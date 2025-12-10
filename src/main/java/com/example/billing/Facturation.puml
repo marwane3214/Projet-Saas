@@ -1,0 +1,318 @@
+@startuml
+' Package layout
+package "domain" {
+  class Invoice {
+    Long id
+    String number
+    Long customerId
+    Long subscriptionId
+    BigDecimal amount
+    String currency = "USD"
+    InvoiceStatus status = DRAFT
+    LocalDate dueDate
+    LocalDateTime issuedAt
+    String notes
+    Long version
+  }
+
+  enum InvoiceStatus {
+    DRAFT
+    OPEN
+    PAID
+    FAILED
+    VOIDED
+  }
+
+  class Payment {
+    Long id
+    Long invoiceId
+    BigDecimal amount
+    String method
+    String gatewayReference
+    PaymentStatus status = PENDING
+    LocalDateTime createdAt
+    String failureReason
+    Long version
+  }
+
+  enum PaymentStatus {
+    PENDING
+    SUCCESS
+    FAILED
+  }
+
+  class Renewal {
+    Long id
+    Long subscriptionId
+    LocalDate renewalDate
+    RenewalStatus status = SCHEDULED
+    LocalDateTime createdAt
+    LocalDateTime processedAt
+    String failureReason
+    Integer retryCount
+    Long version
+  }
+
+  enum RenewalStatus {
+    SCHEDULED
+    PROCESSED
+    FAILED
+  }
+
+  class Credit {
+    Long id
+    Long customerId
+    Long invoiceId
+    BigDecimal amount
+    String reason
+    LocalDateTime createdAt
+    Boolean applied = false
+    Long version
+  }
+
+  ' Enum relationships
+  Invoice --> InvoiceStatus
+  Payment --> PaymentStatus
+  Renewal --> RenewalStatus
+}
+
+package "repository" {
+  interface InvoiceRepository {
+    +Optional<Invoice> findByNumber(String)
+    +List<Invoice> findByCustomerId(Long)
+    +List<Invoice> findBySubscriptionId(Long)
+    +List<Invoice> findByStatus(InvoiceStatus)
+  }
+  interface PaymentRepository {
+    +List<Payment> findByInvoiceId(Long)
+    +Optional<Payment> findByGatewayReference(String)
+    +List<Payment> findByStatus(PaymentStatus)
+  }
+  interface RenewalRepository {
+    +List<Renewal> findBySubscriptionId(Long)
+    +List<Renewal> findByStatus(RenewalStatus)
+    +List<Renewal> findDueRenewals(LocalDate, RenewalStatus)
+  }
+  interface CreditRepository {
+    +List<Credit> findByCustomerId(Long)
+    +List<Credit> findByInvoiceId(Long)
+    +List<Credit> findUnappliedCreditsByCustomerId(Long)
+  }
+}
+
+package "application.dto" {
+  class InvoiceDTO {
+    Long id
+    String number
+    Long customerId
+    Long subscriptionId
+    BigDecimal amount
+    String currency
+    InvoiceStatus status
+    LocalDate dueDate
+    LocalDateTime issuedAt
+    String notes
+  }
+
+  class PaymentDTO {
+    Long id
+    Long invoiceId
+    BigDecimal amount
+    String method
+    String gatewayReference
+    PaymentStatus status
+    LocalDateTime createdAt
+    String failureReason
+  }
+
+  class RenewalDTO {
+    Long id
+    Long subscriptionId
+    LocalDate renewalDate
+    RenewalStatus status
+    LocalDateTime createdAt
+    LocalDateTime processedAt
+    String failureReason
+    Integer retryCount
+  }
+
+  class CreditDTO {
+    Long id
+    Long customerId
+    Long invoiceId
+    BigDecimal amount
+    String reason
+    LocalDateTime createdAt
+    Boolean applied
+  }
+
+  class CreateInvoiceRequest {
+    String number
+    Long customerId
+    Long subscriptionId
+    BigDecimal amount
+    String currency
+    LocalDate dueDate
+    String idempotencyKey
+  }
+
+  class RegisterPaymentRequest {
+    Long invoiceId
+    BigDecimal amount
+    String method
+    String gatewayReference
+    String idempotencyKey
+  }
+
+  class ScheduleRenewalRequest {
+    Long subscriptionId
+    LocalDate renewalDate
+  }
+
+  class IssueCreditRequest {
+    Long customerId
+    Long invoiceId
+    BigDecimal amount
+    String reason
+  }
+}
+
+package "application.mapper" {
+  class InvoiceMapper {
+    +Invoice toEntity(CreateInvoiceRequest)
+    +InvoiceDTO toDTO(Invoice)
+  }
+  class PaymentMapper {
+    +Payment toEntity(RegisterPaymentRequest)
+    +PaymentDTO toDTO(Payment)
+  }
+  class RenewalMapper {
+    +RenewalDTO toDTO(Renewal)
+    +Renewal toEntity(...)
+  }
+
+  class CreditMapper {
+    +CreditDTO toDTO(Credit)
+    +Credit toEntity(...)
+  }
+}
+
+package "infrastructure" {
+  class KafkaEventProducer {
+    +publishInvoiceCreated(InvoiceCreatedEvent)
+    +publishPaymentProcessed(PaymentProcessedEvent)
+    +publishRenewalProcessed(RenewalProcessedEvent)
+  }
+  class IdempotencyService {
+    +boolean isDuplicate(String key)
+    +Optional<String> getResultId(String key)
+    +void recordRequest(String key, String resultId)
+  }
+  package "kafka.event" {
+    class InvoiceCreatedEvent
+    class PaymentProcessedEvent
+    class RenewalProcessedEvent
+  }
+}
+
+package "service" {
+  class InvoiceService {
+    +InvoiceDTO createInvoice(CreateInvoiceRequest)
+    +InvoiceDTO getInvoiceById(Long)
+    +List<InvoiceDTO> getInvoicesByCustomer(Long)
+    +InvoiceDTO markInvoiceAsPaid(Long)
+    +void triggerReconciliation(Long)
+    +List<InvoiceDTO> getAllInvoices()
+  }
+  class PaymentService {
+    +PaymentDTO registerPayment(RegisterPaymentRequest)
+    +PaymentDTO getPaymentById(Long)
+    +List<PaymentDTO> getPaymentsByInvoice(Long)
+    +void handleFailedPayment(Long, String)
+  }
+  class RenewalService {
+    +RenewalDTO scheduleRenewal(ScheduleRenewalRequest)
+    +RenewalDTO processRenewal(Long)
+    +List<RenewalDTO> processDueRenewals()
+    +List<RenewalDTO> retryFailedRenewals()
+    +RenewalDTO getRenewalById(Long)
+    +List<RenewalDTO> getRenewalsBySubscription(Long)
+  }
+  class CreditService {
+    +CreditDTO issueCredit(IssueCreditRequest)
+    +CreditDTO applyCreditToInvoice(Long, Long)
+    +CreditDTO getCreditById(Long)
+    +List<CreditDTO> getCreditsByCustomer(Long)
+    +List<CreditDTO> getUnappliedCreditsByCustomer(Long)
+  }
+}
+
+package "web" {
+  class InvoiceController {
+    +ResponseEntity<InvoiceDTO> createInvoice(CreateInvoiceRequest)
+    +ResponseEntity<InvoiceDTO> getInvoice(Long)
+    +ResponseEntity<List<InvoiceDTO>> getInvoicesByCustomer(Long)
+    +ResponseEntity<InvoiceDTO> markInvoiceAsPaid(Long)
+    +ResponseEntity<Void> triggerReconciliation(Long)
+    +ResponseEntity<List<InvoiceDTO>> getAllInvoices()
+  }
+  class PaymentController {
+    +ResponseEntity<PaymentDTO> registerPayment(RegisterPaymentRequest)
+    +ResponseEntity<PaymentDTO> getPayment(Long)
+    +ResponseEntity<List<PaymentDTO>> getPaymentsByInvoice(Long)
+  }
+  class RenewalController {
+    +ResponseEntity<RenewalDTO> scheduleRenewal(ScheduleRenewalRequest)
+    +ResponseEntity<RenewalDTO> processRenewal(Long)
+    +ResponseEntity<RenewalDTO> getRenewal(Long)
+    +ResponseEntity<List<RenewalDTO>> getRenewalsBySubscription(Long)
+  }
+  class CreditController {
+    +ResponseEntity<CreditDTO> issueCredit(IssueCreditRequest)
+    +ResponseEntity<CreditDTO> applyCreditToInvoice(Long, Long)
+    +ResponseEntity<CreditDTO> getCredit(Long)
+    +ResponseEntity<List<CreditDTO>> getCreditsByCustomer(Long)
+  }
+}
+
+' Associations
+Invoice "1" <-- "0..*" Payment : invoiceId
+Invoice "1" <-- "0..*" Credit : invoiceId
+Invoice "1" <-- "0..*" Renewal : subscriptionId (indirect)
+Renewal --> InvoiceService : uses
+Credit --> Invoice : may be applied to
+
+' Repositories implement data access
+InvoiceService --> InvoiceRepository
+InvoiceService --> InvoiceMapper
+InvoiceService --> IdempotencyService
+InvoiceService --> KafkaEventProducer
+
+PaymentService --> PaymentRepository
+PaymentService --> InvoiceRepository
+PaymentService --> PaymentMapper
+PaymentService --> IdempotencyService
+PaymentService --> KafkaEventProducer
+
+RenewalService --> RenewalRepository
+RenewalService --> RenewalMapper
+RenewalService --> InvoiceService
+RenewalService --> KafkaEventProducer
+
+CreditService --> CreditRepository
+CreditService --> InvoiceRepository
+CreditService --> CreditMapper
+
+' Controllers -> Services
+InvoiceController --> InvoiceService
+PaymentController --> PaymentService
+RenewalController --> RenewalService
+CreditController --> CreditService
+
+' DTO mappers
+InvoiceMapper --> InvoiceDTO
+PaymentMapper --> PaymentDTO
+RenewalMapper --> RenewalDTO
+CreditMapper --> CreditDTO
+
+@enduml

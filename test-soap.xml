@@ -1,0 +1,15 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+                  xmlns:bill="http://example.com/billing/soap">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <bill:createInvoiceRequest>
+         <bill:customerId>1</bill:customerId>
+         <bill:subscriptionId>1</bill:subscriptionId>
+         <bill:amount>100.50</bill:amount>
+         <bill:currency>USD</bill:currency>
+         <bill:dueDate>2024-12-31</bill:dueDate>
+         <bill:notes>Test invoice via SOAP</bill:notes>
+      </bill:createInvoiceRequest>
+   </soapenv:Body>
+</soapenv:Envelope>
+
