@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package com.saas.notificationservice.proto;
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.saas.notificationservice.proto";
+option java_outer_classname = "ChannelConfigProto";
+
+service ChannelConfigService {
+  rpc CreateChannelConfig(CreateChannelConfigRequest) returns (ChannelConfigResponse);
+  rpc GetChannelConfig(GetChannelConfigRequest) returns (ChannelConfigResponse);
+  rpc GetAllChannelConfigs(GetAllChannelConfigsRequest) returns (ChannelConfigListResponse);
+  rpc UpdateChannelConfig(UpdateChannelConfigRequest) returns (ChannelConfigResponse);
+  rpc DeleteChannelConfig(DeleteChannelConfigRequest) returns (DeleteChannelConfigResponse);
+}
+
+message CreateChannelConfigRequest {
+  NotificationChannelProto channel = 1;
+  string configJson = 2;
+  bool isActive = 3;
+}
+
+message GetChannelConfigRequest {
+  int64 id = 1;
+}
+
+message GetAllChannelConfigsRequest {
+}
+
+message UpdateChannelConfigRequest {
+  int64 id = 1;
+  NotificationChannelProto channel = 2;
+  string configJson = 3;
+  bool isActive = 4;
+}
+
+message DeleteChannelConfigRequest {
+  int64 id = 1;
+}
+
+message ChannelConfigResponse {
+  int64 id = 1;
+  NotificationChannelProto channel = 2;
+  string configJson = 3;
+  bool isActive = 4;
+  string createdAt = 5;
+}
+
+message ChannelConfigListResponse {
+  repeated ChannelConfigResponse configs = 1;
+}
+
+message DeleteChannelConfigResponse {
+  bool success = 1;
+  string message = 2;
+}
+

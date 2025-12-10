@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package com.saas.notificationservice.proto;
+
+option java_multiple_files = true;
+option java_package = "com.saas.notificationservice.proto";
+option java_outer_classname = "CommonProto";
+
+enum NotificationChannelProto {
+  CHANNEL_EMAIL = 0;
+  CHANNEL_SMS = 1;
+  CHANNEL_PUSH = 2;
+}
+
+enum NotificationStatusProto {
+  STATUS_QUEUED = 0;
+  STATUS_SENT = 1;
+  STATUS_FAILED = 2;
+}
+
+enum TemplateTypeProto {
+  TEMPLATE_EMAIL = 0;
+  TEMPLATE_SMS = 1;
+  TEMPLATE_PUSH = 2;
+}
+

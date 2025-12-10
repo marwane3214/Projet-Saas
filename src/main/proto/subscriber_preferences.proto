@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package com.saas.notificationservice.proto;
+
+option java_multiple_files = true;
+option java_package = "com.saas.notificationservice.proto";
+option java_outer_classname = "SubscriberPreferencesProto";
+
+service SubscriberPreferencesService {
+  rpc CreatePreferences(CreatePreferencesRequest) returns (PreferencesResponse);
+  rpc GetPreferences(GetPreferencesRequest) returns (PreferencesResponse);
+  rpc GetPreferencesByCustomerId(GetPreferencesByCustomerIdRequest) returns (PreferencesResponse);
+  rpc GetAllPreferences(GetAllPreferencesRequest) returns (PreferencesListResponse);
+  rpc UpdatePreferences(UpdatePreferencesRequest) returns (PreferencesResponse);
+  rpc DeletePreferences(DeletePreferencesRequest) returns (DeletePreferencesResponse);
+}
+
+message CreatePreferencesRequest {
+  int64 customerId = 1;
+  bool emailEnabled = 2;
+  bool smsEnabled = 3;
+  bool pushEnabled = 4;
+  string language = 5;
+}
+
+message GetPreferencesRequest {
+  int64 id = 1;
+}
+
+message GetPreferencesByCustomerIdRequest {
+  int64 customerId = 1;
+}
+
+message GetAllPreferencesRequest {
+}
+
+message UpdatePreferencesRequest {
+  int64 id = 1;
+  int64 customerId = 2;
+  bool emailEnabled = 3;
+  bool smsEnabled = 4;
+  bool pushEnabled = 5;
+  string language = 6;
+}
+
+message DeletePreferencesRequest {
+  int64 id = 1;
+}
+
+message PreferencesResponse {
+  int64 id = 1;
+  int64 customerId = 2;
+  bool emailEnabled = 3;
+  bool smsEnabled = 4;
+  bool pushEnabled = 5;
+  string language = 6;
+  string updatedAt = 7;
+}
+
+message PreferencesListResponse {
+  repeated PreferencesResponse preferences = 1;
+}
+
+message DeletePreferencesResponse {
+  bool success = 1;
+  string message = 2;
+}
+

@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package com.saas.notificationservice.proto;
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.saas.notificationservice.proto";
+option java_outer_classname = "NotificationProto";
+
+service NotificationService {
+  rpc CreateNotification(CreateNotificationRequest) returns (NotificationResponse);
+  rpc GetNotification(GetNotificationRequest) returns (NotificationResponse);
+  rpc GetAllNotifications(GetAllNotificationsRequest) returns (NotificationListResponse);
+  rpc UpdateNotification(UpdateNotificationRequest) returns (NotificationResponse);
+  rpc DeleteNotification(DeleteNotificationRequest) returns (DeleteNotificationResponse);
+}
+
+message CreateNotificationRequest {
+  int64 customerId = 1;
+  int64 templateId = 2;
+  NotificationChannelProto channel = 3;
+  NotificationStatusProto status = 4;
+  string scheduledAt = 5;
+  string payload = 6;
+}
+
+message GetNotificationRequest {
+  int64 id = 1;
+}
+
+message GetAllNotificationsRequest {
+}
+
+message UpdateNotificationRequest {
+  int64 id = 1;
+  int64 customerId = 2;
+  int64 templateId = 3;
+  NotificationChannelProto channel = 4;
+  NotificationStatusProto status = 5;
+  string scheduledAt = 6;
+  string sentAt = 7;
+  string payload = 8;
+}
+
+message DeleteNotificationRequest {
+  int64 id = 1;
+}
+
+message NotificationResponse {
+  int64 id = 1;
+  int64 customerId = 2;
+  int64 templateId = 3;
+  NotificationChannelProto channel = 4;
+  NotificationStatusProto status = 5;
+  string scheduledAt = 6;
+  string sentAt = 7;
+  string payload = 8;
+  string createdAt = 9;
+}
+
+message NotificationListResponse {
+  repeated NotificationResponse notifications = 1;
+}
+
+message DeleteNotificationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
