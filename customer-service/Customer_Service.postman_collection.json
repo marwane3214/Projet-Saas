@@ -1,0 +1,437 @@
+{
+	"info": {
+		"name": "Customer Service API",
+		"description": "Collection complète pour tester le microservice Customer Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Companies",
+			"item": [
+				{
+					"name": "Create Company",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"legalName\": \"Acme Corporation\",\n  \"vatNumber\": \"FR12345678901\",\n  \"country\": \"France\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/companies",
+							"host": ["{{base_url}}"],
+							"path": ["api", "companies"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"companyId\", jsonData.id);",
+									"",
+									"pm.test(\"Response has id\", function () {",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get All Companies",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/companies",
+							"host": ["{{base_url}}"],
+							"path": ["api", "companies"]
+						}
+					}
+				},
+				{
+					"name": "Get Company by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{companyId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "companies", "{{companyId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Company",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"legalName\": \"Acme Corporation Updated\",\n  \"vatNumber\": \"FR12345678901\",\n  \"country\": \"France\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{companyId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "companies", "{{companyId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Company",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{base_url}}/api/companies/{{companyId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "companies", "{{companyId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "Create Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+33123456789\",\n  \"companyId\": \"{{companyId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customers",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customers"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"customerId\", jsonData.id);",
+									"",
+									"pm.test(\"Response has id\", function () {",
+									"    pm.expect(jsonData).to.have.property('id');",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get All Customers",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/customers",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customers"]
+						}
+					}
+				},
+				{
+					"name": "Get Customer by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/customers/{{customerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customers", "{{customerId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Customer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"phone\": \"+33987654321\",\n  \"companyId\": \"{{companyId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/customers/{{customerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customers", "{{customerId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Customer",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{base_url}}/api/customers/{{customerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "customers", "{{customerId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Billing Addresses",
+			"item": [
+				{
+					"name": "Create Billing Address",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"line1\": \"123 Main Street\",\n  \"line2\": \"Suite 100\",\n  \"city\": \"Paris\",\n  \"zipCode\": \"75001\",\n  \"country\": \"France\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/billing-addresses",
+							"host": ["{{base_url}}"],
+							"path": ["api", "billing-addresses"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"billingAddressId\", jsonData.id);"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get All Billing Addresses",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/billing-addresses",
+							"host": ["{{base_url}}"],
+							"path": ["api", "billing-addresses"]
+						}
+					}
+				},
+				{
+					"name": "Get Billing Address by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/billing-addresses/{{billingAddressId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "billing-addresses", "{{billingAddressId}}"]
+						}
+					}
+				},
+				{
+					"name": "Attach to Customer",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/api/billing-addresses/{{billingAddressId}}/attach/{{customerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "billing-addresses", "{{billingAddressId}}", "attach", "{{customerId}}"]
+						}
+					}
+				},
+				{
+					"name": "Detach from Customer",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{base_url}}/api/billing-addresses/{{billingAddressId}}/detach",
+							"host": ["{{base_url}}"],
+							"path": ["api", "billing-addresses", "{{billingAddressId}}", "detach"]
+						}
+					}
+				},
+				{
+					"name": "Update Billing Address",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"line1\": \"456 New Street\",\n  \"line2\": \"Apt 5\",\n  \"city\": \"Lyon\",\n  \"zipCode\": \"69001\",\n  \"country\": \"France\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/billing-addresses/{{billingAddressId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "billing-addresses", "{{billingAddressId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Billing Address",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{base_url}}/api/billing-addresses/{{billingAddressId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "billing-addresses", "{{billingAddressId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Contacts",
+			"item": [
+				{
+					"name": "Create Contact",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"type\": \"BILLING\",\n  \"email\": \"contact.billing@example.com\",\n  \"phone\": \"+33111222333\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contacts"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"contactId\", jsonData.id);"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get All Contacts",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/contacts",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contacts"]
+						}
+					}
+				},
+				{
+					"name": "Get Contacts by Customer ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/contacts/customers/{{customerId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contacts", "customers", "{{customerId}}"]
+						}
+					}
+				},
+				{
+					"name": "Get Contact by ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contactId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contacts", "{{contactId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Contact",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"type\": \"TECHNICAL\",\n  \"email\": \"contact.technical@example.com\",\n  \"phone\": \"+33444555666\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contactId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contacts", "{{contactId}}"]
+						}
+					}
+				},
+				{
+					"name": "Delete Contact",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{base_url}}/api/contacts/{{contactId}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "contacts", "{{contactId}}"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		}
+	]
+}
+
